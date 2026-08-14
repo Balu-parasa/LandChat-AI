@@ -76,8 +76,7 @@ const App = () => {
                 <Route path="/admin/properties/:id" element={<ProtectedRoute allowedRole="admin"><SellerPropertyDetails /></ProtectedRoute>} />
                 <Route path="/admin/add-property" element={<ProtectedRoute allowedRole="admin"><AddProperty /></ProtectedRoute>} />
                 <Route path="/admin/messages" element={<ProtectedRoute allowedRole="admin"><Messages /></ProtectedRoute>} />
-                <Route path="/admin/settings" element={<ProtectedRoute allowedRole="admin"><Settings /></ProtectedRoute>} />
-                <Route path="/admin/edit-property/:id" element={<ProtectedRoute allowedRole="admin"><EditProperty /></ProtectedRoute>} />
+               
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
