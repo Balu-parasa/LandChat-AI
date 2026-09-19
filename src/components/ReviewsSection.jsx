@@ -15,7 +15,12 @@ const ReviewsSection = ({ propertyId }) => {
           </CardTitle>
         </div>
       </CardHeader>
-     
+      <CardContent className="space-y-4">
+        <p className="text-center text-muted-foreground py-6">
+          Reviews system is currently being upgraded. Please check back later.
+        </p>
+      </CardContent>
+    </Card>
   );
 };
 
