@@ -20,7 +20,15 @@ An AI-driven real estate advisory platform designed to help investors, developer
 
 ---
 
+## 🛠 Tech Stack
 
+| Layer | Technology |
+|---|---|
+| **Frontend** | React / Next.js, Tailwind CSS |
+| **Backend** | Python (FastAPI / Flask) or Node.js (Express) |
+| **AI / LLM** | OpenAI API / Gemini API / LangChain |
+| **Database** | PostgreSQL with PostGIS / MongoDB / SQLite |
+| **Deployment** | Docker, Vercel / Render |
 
 ---
 
