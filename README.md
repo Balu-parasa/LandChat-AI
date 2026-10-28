@@ -81,15 +81,6 @@ pip install -r requirements.txt
 python app.py
 If using Node.js:
 
-Bash
-npm install
-npm run dev
-4. Frontend Setup (if separate client)
-Bash
-cd client
-npm install
-npm run start
-Visit http://localhost:3000 (or http://localhost:5000) in your browser.
 
 ---
 
