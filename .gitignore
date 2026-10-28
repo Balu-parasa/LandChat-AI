@@ -1,22 +1,59 @@
-# Logs
-logs
+# Environment files (CRITICAL: Never commit secrets)
+.env
+.env.*
+!.env.example
+*.env
+server/.env
+server/.env.*
+!server/.env.example
+
+# Dependencies
+node_modules/
+server/node_modules/
+/.pnp
+.pnp.js
+
+# Production build outputs
+dist/
+dist-ssr/
+build/
+
+# Vite temporary timestamp artifacts
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Logs and debug files
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+error.txt
+server/error.txt
+server/error.log
 
-node_modules
-dist
-dist-ssr
-*.local
+# Temporary archives & test dumps
+*.zip
+*.tar.gz
+*.7z
+*.rar
+bun.lockb
 
-# Editor directories and files
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor files
+.idea/
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj

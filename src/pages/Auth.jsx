@@ -12,13 +12,13 @@ import { MapPin, Building2, Users, Shield } from 'lucide-react';
 import { z } from 'zod';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 const signupSchema = z.object({
-  fullName: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  email: z.string().email('Invalid email address'),
+  fullName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
+  email: z.string().trim().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
   role: z.enum(['customer', 'admin']),
 });
@@ -49,8 +49,12 @@ const Auth = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    const cleanEmail = loginForm.email.trim();
     try {
-      loginSchema.parse(loginForm);
+      loginSchema.parse({
+        email: cleanEmail,
+        password: loginForm.password
+      });
     } catch (err) {
       if (err instanceof z.ZodError) {
         toast.error(err.errors[0].message);
@@ -60,7 +64,7 @@ const Auth = () => {
 
     setIsSubmitting(true);
     try {
-      await login(loginForm.email, loginForm.password);
+      await login(cleanEmail, loginForm.password);
       // Toast handled in context
     } catch (error) {
       // Error handled in context
@@ -73,8 +77,16 @@ const Auth = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
+    const cleanName = signupForm.fullName.trim();
+    const cleanEmail = signupForm.email.trim();
+
     try {
-      signupSchema.parse(signupForm);
+      signupSchema.parse({
+        fullName: cleanName,
+        email: cleanEmail,
+        password: signupForm.password,
+        role: signupForm.role
+      });
     } catch (err) {
       if (err instanceof z.ZodError) {
         toast.error(err.errors[0].message);
@@ -85,8 +97,8 @@ const Auth = () => {
     setIsSubmitting(true);
     try {
       await register({
-        full_name: signupForm.fullName,
-        email: signupForm.email,
+        full_name: cleanName,
+        email: cleanEmail,
         password: signupForm.password,
         role: signupForm.role
       });
@@ -185,6 +197,9 @@ const Auth = () => {
                       <Input
                         id="login-email"
                         type="email"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck="false"
                         placeholder="you@example.com"
                         value={loginForm.email}
                         onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
@@ -226,6 +241,9 @@ const Auth = () => {
                       <Input
                         id="signup-email"
                         type="email"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck="false"
                         placeholder="you@example.com"
                         value={signupForm.email}
                         onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}

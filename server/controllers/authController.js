@@ -3,7 +3,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+    return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', {
         expiresIn: '30d',
     });
 };
@@ -13,7 +13,17 @@ const generateToken = (id) => {
 const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    if (!email || !password) {
+        res.status(400);
+        throw new Error('Please provide email and password');
+    }
+
+    const cleanEmail = email.trim();
+    // Case-insensitive lookup so mobile keyboard auto-capitalization does not break login
+    const escapedEmail = cleanEmail.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const user = await User.findOne({
+        email: { $regex: new RegExp(`^${escapedEmail}$`, 'i') }
+    });
 
     if (user && (await user.matchPassword(password))) {
         res.json({
@@ -22,7 +32,7 @@ const authUser = asyncHandler(async (req, res) => {
             email: user.email,
             role: user.role,
             avatar_url: user.avatar_url,
-            favorites: user.favorites,
+            favorites: user.favorites || [],
             token: generateToken(user._id),
         });
     } else {
@@ -36,7 +46,17 @@ const authUser = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { full_name, email, password, role } = req.body;
 
-    const userExists = await User.findOne({ email });
+    if (!full_name || !email || !password) {
+        res.status(400);
+        throw new Error('Please provide all required fields');
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const escapedEmail = cleanEmail.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+    const userExists = await User.findOne({
+        email: { $regex: new RegExp(`^${escapedEmail}$`, 'i') }
+    });
 
     if (userExists) {
         res.status(400);
@@ -44,8 +64,8 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const user = await User.create({
-        full_name,
-        email,
+        full_name: full_name.trim(),
+        email: cleanEmail,
         password,
         role: role || 'customer',
     });
@@ -56,7 +76,8 @@ const registerUser = asyncHandler(async (req, res) => {
             full_name: user.full_name,
             email: user.email,
             role: user.role,
-            favorites: user.favorites,
+            avatar_url: user.avatar_url || '',
+            favorites: user.favorites || [],
             token: generateToken(user._id),
         });
     } else {
@@ -77,7 +98,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
             email: user.email,
             role: user.role,
             avatar_url: user.avatar_url,
-            favorites: user.favorites,
+            favorites: user.favorites || [],
         });
     } else {
         res.status(404);
@@ -107,7 +128,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
             email: updatedUser.email,
             role: updatedUser.role,
             avatar_url: updatedUser.avatar_url,
-            favorites: updatedUser.favorites,
+            favorites: updatedUser.favorites || [],
             token: generateToken(updatedUser._id),
         });
     } else {
@@ -122,7 +143,7 @@ const getFavorites = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).populate('favorites');
     
     if (user) {
-        res.json(user.favorites);
+        res.json(user.favorites || []);
     } else {
         res.status(404);
         throw new Error('User not found');
@@ -136,7 +157,8 @@ const toggleFavorite = asyncHandler(async (req, res) => {
     const propertyId = req.params.propertyId;
 
     if (user) {
-        const isFavorite = user.favorites.includes(propertyId);
+        user.favorites = user.favorites || [];
+        const isFavorite = user.favorites.some(id => id.toString() === propertyId);
 
         if (isFavorite) {
             user.favorites = user.favorites.filter(id => id.toString() !== propertyId);
@@ -144,9 +166,8 @@ const toggleFavorite = asyncHandler(async (req, res) => {
             user.favorites.push(propertyId);
         }
 
-        const updatedUser = await user.save();
-        
-        res.json(updatedUser.favorites);
+        await user.save();
+        res.json(user.favorites);
     } else {
         res.status(404);
         throw new Error('User not found');
