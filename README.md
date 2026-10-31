@@ -91,5 +91,27 @@ npm install
 npm run start
 Visit http://localhost:3000 (or http://localhost:5000) in your browser.
 
+---
+
+🎯 Use Cases
+First-Time Buyers: Understand deeds, easements, mineral rights, and boundary terminology in plain language.
+
+Commercial Developers: Quickly filter parcels by access to major transportation corridors and municipal utilities.
+
+Agricultural Investors: Check soil viability, water table levels, and long-term land appreciation trends.
+
+
+---
+---
+
+🎯 Use Cases
+First-Time Buyers: Understand deeds, easements, mineral rights, and boundary terminology in plain language.
+
+Commercial Developers: Quickly filter parcels by access to major transportation corridors and municipal utilities.
+
+Agricultural Investors: Check soil viability, water table levels, and long-term land appreciation trends.
+
+
+---
 
 
