@@ -40,7 +40,54 @@ It combines an intuitive property discovery engine with peer-to-peer messaging a
 
 The application employs a **Client-Server Decoupled Architecture** augmented by an external AI service.
 
+### Architecture Diagram
 
+```mermaid
+graph LR
+    subgraph Frontend["Frontend (React / Vite)"]
+        UI["React SPA & Dashboards"]
+        AuthCtx["Auth Context (JWT)"]
+        QueryClient["React Query Cache"]
+    end
+
+    subgraph Backend["Backend (Node.js / Express)"]
+        AuthCtrl["Auth Controller"]
+        PropCtrl["Property Controller"]
+        ChatCtrl["Chat Controller"]
+        AICtrl["AI Recommendation Engine"]
+    end
+
+    subgraph External["External Services"]
+        Gemini["Google Gemini API"]
+    end
+
+    subgraph Database["Data Layer (MongoDB)"]
+        UserColl[("Users Collection")]
+        PropColl[("Properties Collection")]
+        MsgColl[("Messages Collection")]
+    end
+
+    UI <--> AuthCtx
+    UI <--> QueryClient
+    QueryClient <-->|REST API Calls| Backend
+    
+    AuthCtrl <--> UserColl
+    PropCtrl <--> PropColl
+    ChatCtrl <--> MsgColl
+    AICtrl -->|Context Retrieval| PropColl
+    AICtrl <-->|Generative Analysis| Gemini
+
+    classDef default fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px,color:#334155;
+    classDef api fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0c4a6e;
+    classDef data fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+    classDef app fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#581c87;
+    classDef user fill:#ffedd5,stroke:#ea580c,stroke-width:2px,color:#7c2d12;
+
+    class UI,AuthCtx,QueryClient app;
+    class Gemini api;
+    class UserColl,PropColl,MsgColl data;
+    class AuthCtrl,PropCtrl,ChatCtrl,AICtrl default;
+```
 
 ### End-to-End Workflow:
 
